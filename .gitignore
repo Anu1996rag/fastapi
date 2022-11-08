@@ -1,0 +1,4 @@
+# Environments
+fastapi_venv/
+.env
+.idea
