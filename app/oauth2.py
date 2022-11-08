@@ -4,11 +4,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm.session import Session
-from config import settings
-
-import database
-import models
-import schemas
+from app.config import settings
+from app import database, models, schemas
 
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm

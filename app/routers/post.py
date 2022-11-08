@@ -3,11 +3,7 @@ from typing import List, Optional
 from fastapi import status, HTTPException, Depends, APIRouter, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
-import database
-import models
-import oauth2
-import schemas
+from app import database, models, oauth2, schemas
 
 router = APIRouter(
     prefix="/posts",
