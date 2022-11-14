@@ -24,4 +24,4 @@ app.include_router(vote.router)
 
 @app.get("/")
 def home():
-    return "Fast API"
+    return {"message": "Fast API"}
