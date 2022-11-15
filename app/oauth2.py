@@ -6,6 +6,8 @@ from jose import JWTError, jwt
 from sqlalchemy.orm.session import Session
 from app.config import settings
 from app import database, models, schemas
+from logger import logger
+
 
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
@@ -30,10 +32,12 @@ def verify_access_token(token: str, credentials_exception):
         user_id: str = payload.get("user_id")
 
         if user_id is None:
+            logger.info("User id not found")
             raise credentials_exception
 
         token_data = schemas.TokenData(id=user_id)
-    except JWTError:
+    except JWTError as jwt_error_message:
+        logger.info(str(jwt_error_message))
         raise credentials_exception
     return token_data
 
@@ -48,4 +52,5 @@ def get_current_user(token: str = Depends(oauth2_scheme),
 
     token_data = verify_access_token(token, credentials_exception)
     user = db.query(models.User).filter(models.User.id == token_data.id).first()
+    logger.info(f"User verified successfully")
     return user

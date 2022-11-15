@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import post, user, auth, vote
 from app import database, models
+from logger import logger
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -24,4 +25,5 @@ app.include_router(vote.router)
 
 @app.get("/")
 def home():
+    logger.info("home page")
     return {"message": "Fast API"}
