@@ -2,8 +2,6 @@
 fastapi_venv/
 .env
 .idea
-app/__pycache__/
-app/routers/__pycache__/
 __pycache__/
-*.py[cod]
+*.pyc
 logs
