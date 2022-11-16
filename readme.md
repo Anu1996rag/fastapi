@@ -70,6 +70,8 @@ pytest -v
 To access the API documentation, use the URL
 http://127.0.0.1:8000/docs#
 
+![image](https://user-images.githubusercontent.com/49953149/202212609-5000b942-b48a-40ac-97ad-32e886e56783.png)
+
 ## Using Docker 
 
 You can also pull the docker image using the below command.
