@@ -58,6 +58,12 @@ INFO     2022-11-16 11:30:28.783 | uvicorn.lifespan.on:startup | Waiting for app
 INFO     2022-11-16 11:30:28.783 | uvicorn.lifespan.on:startup | Application startup complete.
 INFO     2022-11-16 11:30:28.784 | uvicorn.server:_log_started_message | Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
+## Run Tests
+
+Use below command to run the tests
+```commandline
+pytest -v
+```
 
 ## API Docs
 
