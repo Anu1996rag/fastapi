@@ -6,7 +6,6 @@ from sqlalchemy import func
 from app import database, models, oauth2, schemas
 from logger import logger
 
-
 router = APIRouter(
     prefix="/posts",
     tags=['Posts']
@@ -14,23 +13,24 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[schemas.PostOut])
-def get_posts(db: Session = Depends(database.get_db),
-              current_user=Depends(oauth2.get_current_user),
-              limit: int = 10, skip: int = 0, search: Optional[str] = ""):
-
+async def get_posts(db: Session = Depends(database.get_db),
+                    current_user=Depends(oauth2.get_current_user),
+                    limit: int = 10, skip: int = 0, search: Optional[str] = ""):
     # posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
     posts = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
-        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(
+        models.Post.title.contains(search)).limit(limit).offset(skip).all()
     logger.info("Fetching all posts")
     return posts
 
 
 @router.get("/{id}", response_model=schemas.PostOut)
-def get_posts_by_id(id: int, db: Session = Depends(database.get_db),
-                    current_user=Depends(oauth2.get_current_user)):
+async def get_posts_by_id(id: int, db: Session = Depends(database.get_db),
+                          current_user=Depends(oauth2.get_current_user)):
     posts = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
-        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == id).first()
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(
+        models.Post.id == id).first()
     if not posts:
         logger.info(f"Post with id {id} not found in the database")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -40,8 +40,8 @@ def get_posts_by_id(id: int, db: Session = Depends(database.get_db),
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
-def create_posts(post: schemas.PostCreate, db: Session = Depends(database.get_db),
-                 current_user=Depends(oauth2.get_current_user)):
+async def create_posts(post: schemas.PostCreate, db: Session = Depends(database.get_db),
+                       current_user=Depends(oauth2.get_current_user)):
     new_post = models.Post(**post.dict(), owner_id=current_user.id)
     db.add(new_post)
     db.commit()
@@ -51,8 +51,8 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(database.get_db
 
 
 @router.put("/{id}", response_model=schemas.PostResponse)
-def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(database.get_db),
-                current_user=Depends(oauth2.get_current_user)):
+async def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(database.get_db),
+                      current_user=Depends(oauth2.get_current_user)):
     post_query = db.query(models.Post).filter(models.Post.id == id)
 
     post = post_query.first()
@@ -76,8 +76,8 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post_by_id(id: int, db: Session = Depends(database.get_db),
-                      current_user=Depends(oauth2.get_current_user)):
+async def delete_post_by_id(id: int, db: Session = Depends(database.get_db),
+                            current_user=Depends(oauth2.get_current_user)):
     post_query = db.query(models.Post).filter(models.Post.id == id)
 
     post = post_query.first()

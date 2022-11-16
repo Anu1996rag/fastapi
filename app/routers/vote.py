@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from app import database, models, oauth2, schemas
 from logger import logger
 
-
 router = APIRouter(
     prefix="/vote",
     tags=['Votes']
@@ -11,9 +10,8 @@ router = APIRouter(
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def vote(vote: schemas.VoteResponse, db: Session = Depends(database.get_db),
-         current_user=Depends(oauth2.get_current_user)):
-
+async def vote(vote: schemas.VoteResponse, db: Session = Depends(database.get_db),
+               current_user=Depends(oauth2.get_current_user)):
     # precheck if the post exists
     post = db.query(models.Post).filter(models.Post.id == vote.post_id).first()
     if not post:
